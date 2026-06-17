@@ -8,7 +8,7 @@ LAD (lists) · IAD (images) · PAD (posts) · **CAD (courses)**.
 | | |
 |---|---|
 | **Local UAT** | http://localhost:15011 |
-| **Prod** | _pending Vercel link_ (matsiems scope) |
+| **Prod** | https://cad-steel.vercel.app |
 | **GitHub** | https://github.com/flexappdev/cad |
 | **Port** | 15011 |
 | **Accent** | `#7c3aed` (violet — learning) |
