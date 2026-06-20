@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { GAScript } from "@/components/GAScript";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 export const metadata: Metadata = {
   title: { default: "CAD — Course A Day", template: "%s · CAD" },
@@ -11,12 +10,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <GAScript />
-        <Header />
-        <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
-        <Footer />
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

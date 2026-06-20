@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Shell } from "@/components/shell/Shell";
 
 export const metadata: Metadata = {
   title: "About",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="prose">
+    <Shell>
+      <div className="prose max-w-3xl mx-auto p-6">
       <h1>About CAD</h1>
       <p>
         <strong>CAD — Course A Day</strong> ships one fresh AI-generated micro-course per day, free to read, library
@@ -69,11 +71,11 @@ export default function AboutPage() {
 
       <h2>Links</h2>
       <ul>
-        <li><Link href="/">Today&apos;s course</Link></li>
-        <li><Link href="/library">Library</Link></li>
+        <li><Link href="/">Catalogue</Link></li>
         <li><Link href="/feed.xml">RSS</Link></li>
         <li><a href="https://github.com/flexappdev/cad">GitHub</a></li>
       </ul>
-    </div>
+      </div>
+    </Shell>
   );
 }

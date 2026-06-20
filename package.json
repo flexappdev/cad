@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "seed": "tsx scripts/seed-business-edu.ts",
+    "seed:95": "tsx scripts/seed-95-backdated.ts",
     "daily": "tsx scripts/daily-pipeline.ts",
     "daily:dry": "tsx scripts/daily-pipeline.ts --dry-run",
     "md:course": "tsx scripts/md-to-course.ts"

@@ -1,43 +1,30 @@
-import Link from "next/link";
 import { listCourses } from "@/lib/mongo";
-import { CourseCard } from "@/components/CourseCard";
-import { DailyHero } from "@/components/DailyHero";
+import { CATEGORIES, isFlow, type Category } from "@/lib/catalogue";
+import { CatalogueClient } from "@/components/catalogue/CatalogueClient";
+import { Shell } from "@/components/shell/Shell";
 
-export const revalidate = 300; // 5 min ISR
+export const revalidate = 300;
 
-export default async function HomePage() {
-  let courses: Awaited<ReturnType<typeof listCourses>> = [];
+export default async function HomePage(props: { searchParams: Promise<{ section?: string; view?: string; q?: string }> }) {
+  const sp = await props.searchParams;
+  let allCourses: Awaited<ReturnType<typeof listCourses>> = [];
   try {
-    courses = await listCourses({ limit: 7 });
+    allCourses = await listCourses({ limit: 200 });
   } catch {
-    // MONGODB_URI not set yet → empty state
+    // empty state if Mongo not reachable
   }
-  const today = courses[0];
-  const recent = courses.slice(1);
+
+  const section = sp.section ?? "All";
 
   return (
-    <div className="space-y-12">
-      {today ? (
-        <DailyHero course={today} />
-      ) : (
-        <section className="py-12 text-center space-y-3">
-          <h1 className="text-3xl font-semibold tracking-tight">No course yet today</h1>
-          <p className="text-slate-600">The daily cron runs at 00:05 UTC. Check back soon — or browse the library.</p>
-          <Link href="/library" className="inline-block mt-3 text-brand underline">Open the library →</Link>
-        </section>
-      )}
-
-      {recent.length > 0 && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Recent</h2>
-            <Link href="/library" className="text-sm text-brand">See all →</Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {recent.map((c) => <CourseCard key={c._id} course={c} />)}
-          </div>
-        </section>
-      )}
-    </div>
+    <Shell footerCount={allCourses.length}>
+      <CatalogueClient courses={allCourses} initialSection={section} initialView={sp.view ?? "tiles"} initialQuery={sp.q ?? ""} />
+    </Shell>
   );
 }
+
+// helper kept here so the page TypeChecks the runtime contract for "section"
+function _isKnownSection(s: string): s is "All" | Category {
+  return s === "All" || (CATEGORIES as readonly string[]).includes(s) || isFlow(s);
+}
+void _isKnownSection;

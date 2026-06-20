@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { findCourseBySlug } from "@/lib/mongo";
 import { LessonReader } from "@/components/LessonReader";
-import { TopicChip } from "@/components/TopicChip";
+import { Shell } from "@/components/shell/Shell";
+import { Badge } from "@/components/ui/Badge";
+import { Star, Users, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -34,23 +36,34 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   } catch {}
   if (!course) notFound();
 
+  const status = course.status ?? "Published";
+
   return (
-    <div className="space-y-8">
-      <header className="space-y-3">
-        <Link href="/library" className="text-sm text-slate-500 hover:text-slate-900">← Library</Link>
-        <h1 className="text-3xl font-semibold tracking-tight">{course.title}</h1>
-        <p className="text-lg text-slate-700">{course.tagline}</p>
-        <div className="flex items-center gap-3 text-sm text-slate-500">
-          <span>{course.date}</span>
-          <span>·</span>
-          <span>{course.lessons.length} lessons</span>
-          <span>·</span>
-          <span>~ {course.duration_min} min</span>
-          <span>·</span>
-          <TopicChip topic={course.topic} />
-        </div>
-      </header>
-      <LessonReader course={course} />
-    </div>
+    <Shell>
+      <div className="max-w-3xl mx-auto p-6 space-y-8">
+        <header className="space-y-3">
+          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">← Catalogue</Link>
+          <div className="flex items-start gap-4">
+            <span className="text-4xl">{course.thumbnail ?? "📚"}</span>
+            <div className="flex-1">
+              <h1 className="text-3xl font-semibold tracking-tight">{course.title}</h1>
+              <p className="text-lg text-muted-foreground mt-1">{course.tagline}</p>
+            </div>
+            <Badge variant={(status as never) ?? "default"}>{status}</Badge>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <span>{course.date}</span>
+            <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5" /> {(course.rating ?? 0).toFixed(1)}</span>
+            <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {(course.enrolled ?? 0).toLocaleString()}</span>
+            <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {course.duration_min} min</span>
+            <span>·</span>
+            <span>{course.lessons.length} lessons</span>
+            {course.category && <><span>·</span><span>{course.category}</span></>}
+            {course.level && <><span>·</span><span>{course.level}</span></>}
+          </div>
+        </header>
+        <LessonReader course={course} />
+      </div>
+    </Shell>
   );
 }
